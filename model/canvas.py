@@ -1,3 +1,6 @@
+import numpy as np
+from PIL import Image
+
 from model.color import Color
 
 
@@ -17,3 +20,9 @@ class Canvas:
 
     def reset(self):
         self._canvas = [[self.init_color] * self.w for _ in range(self.h)]
+
+    def to_pil(self) -> Image:
+        img = np.array([[list(self._canvas[y][x].rgb()) for x in range(self.w)] for y in range(self.h)], np.uint8)
+        #img = np.zeros((256, 256, 3), np.int8)
+        #img.fill(255)
+        return Image.fromarray(img, mode="RGB")

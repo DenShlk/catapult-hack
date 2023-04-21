@@ -23,3 +23,14 @@ class Color:
 
     def to_integer(self) -> int:
         return (self._r << 16) | (self._g << 8) | self._b
+
+    @staticmethod
+    def mix_colors(colors: dict['Color', int]) -> 'Color':
+        r, g, b = 0, 0, 0
+        cnt = 0
+        for key, value in colors.items():
+            r += key.r() * value
+            g += key.g() * value
+            b += key.b() * value
+            cnt += value
+        return Color(r // cnt, g // cnt, b // cnt)
