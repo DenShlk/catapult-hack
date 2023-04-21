@@ -1,16 +1,23 @@
-# This is a sample Python script.
+from client import Client
+from client.mock_api import MockAPI
+from client.api import PrefixAPI
+from client.dats_api import DatsArtHttpAPI
+from requests import Session
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+token = '643ef1557ac24643ef1557ac25'
+session = Session()
+session.headers.update({'Authorization': f'Bearer {token}'})
+
+api = PrefixAPI('/art', DatsArtHttpAPI('http://api.datsart.dats.team/', session))
+client = Client(api)
+
+try:
+    res = client.stage.next()
+except Exception as e:
+    print(e)
+
+print(res)
+print('Done, enjoy!')
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
 
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
