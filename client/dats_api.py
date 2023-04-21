@@ -13,6 +13,6 @@ class DatsArtHttpAPI(API):
 
         data = data or {}
         files = {key: (None, data[key]) for key in data}
-        response = self._session.post(url, files=files, headers={'content-type': 'multipart/form-data'})
+        response = self._session.post(url, files=files)
 
         return response.json()

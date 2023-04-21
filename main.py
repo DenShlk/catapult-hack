@@ -12,7 +12,7 @@ api = PrefixAPI('/art', DatsArtHttpAPI('http://api.datsart.dats.team/', session)
 client = Client(api)
 
 try:
-    res = client.stage.next()
+    res = client.factory.pick(num=1, tick=1682104082247050628)
 except Exception as e:
     print(e)
 
