@@ -16,7 +16,7 @@ class Color:
         return self._g
 
     def b(self) -> int:
-        return self._g
+        return self._b
 
     def rgb(self) -> (int, int, int):
         return self._r, self._g, self._b
@@ -34,3 +34,7 @@ class Color:
             b += key.b() * value
             cnt += value
         return Color(r // cnt, g // cnt, b // cnt)
+
+    def __repr__(self) -> str:
+        return f'({self._r, self._g, self._b})'
+

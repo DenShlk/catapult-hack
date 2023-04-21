@@ -16,6 +16,8 @@ class Canvas:
         return self._canvas[y][x]
 
     def set(self, x: int, y: int, color: Color):
+        if x < 0 or x >= self.w or y < 0 or y >= self.h:
+            return
         self._canvas[y][x] = color
 
     def reset(self):

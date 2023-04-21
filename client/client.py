@@ -1,4 +1,6 @@
 from typing import Dict
+
+from model.ballistics import point2params
 from .api import API, PrefixAPI
 
 
@@ -53,7 +55,7 @@ class Ballista(Base):
     def __init__(self, api: API):
         super().__init__(api)
 
-    def shoot(self, angle_horizontal: int, angle_vertical: int, power: float, colors: Dict[int, int]):
+    def shoot(self, angle_horizontal: float, angle_vertical: float, power: float, colors: Dict[int, int]):
         data = {
             'angleHorizontal': angle_horizontal,
             'angleVertical': angle_vertical,
@@ -64,6 +66,10 @@ class Ballista(Base):
             data[f'colors[{color}]'] = colors[color]
 
         return self.api.exec('/shoot', data=data)
+
+    def shoot_aim(self, canvas_w: int, x: int, y: int, colors: Dict[int, int]):
+        params = point2params(canvas_w, x, y, sum(colors.values()))
+        self.shoot(colors=colors, **params)
 
 
 class State(Base):
