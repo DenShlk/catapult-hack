@@ -14,13 +14,14 @@ from model.color import Color
 #         return Mix(self.colors + another.colors, self.amounts + another.amounts)
 
 def find_mix(storage: dict[Color, int], target: Color, target_amount: int) -> dict[Color, int]:
-    if len(storage) > 500:
-        storage = {k: storage[k] for k in random.sample(list(storage.keys()), 500)}
+    if len(storage) > 1000:
+        storage = {k: storage[k] for k in random.sample(list(storage.keys()), 1000)}
     else:
         storage = dict(storage)
+    storage = {k: min(v, 1000) for k, v in storage.items()}
     target = target.rgb_np()
     current_amount = sum(storage.values())
-    current = sum([w * c.rgb_np() for c, w in storage.items()]) / current_amount
+    current = sum([w * c.rgb_np() / current_amount for c, w in storage.items()])
     while current_amount > target_amount * 2 and len(storage) > 100:
         diff = current - target
 

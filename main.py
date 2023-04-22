@@ -34,7 +34,7 @@ client = Client(api)
 # print(f'target: {target}, result: {Color.mix_colors(colors)} {sum(colors.values())}')
 # exit(0)
 
-with open('solutions/level_4.json') as f:
+with open('solutions/level_6_ufo.json') as f:
     solutions = json.load(f)
 
 solutions = sorted(solutions, key=lambda arr: arr[1], reverse=False)
@@ -63,7 +63,7 @@ start_time = time.time()
 idx = 0
 precalculated_colors = []
 for x, y, r, color in tqdm(solutions):
-    color = Color(color[1], color[0], color[2])
+    color = Color(*color)
     if is_white(color):
         continue
 
@@ -81,16 +81,16 @@ for x, y, r, color in tqdm(solutions):
 
 print(f'calculated mixing, took {time.time() - start_time}s')
 
-with open('solutions/level_4_colors.json', 'w') as f:
+with open('solutions/level_6_ufo_colors.json', 'w') as f:
     json.dump(precalculated_colors, f)
 
-with open('solutions/level_4_colors.json') as f:
+with open('solutions/level_6_ufo_colors.json') as f:
     precalculated_colors = json.load(f)
 start_time = time.time()
 print(f'total amount of paint: {sum([sum(x.values()) for x in precalculated_colors])}')
 idx = 0
 for x, y, r, color in reversed(solutions):
-    color = Color(color[1], color[0], color[2])
+    color = Color(*color)
     if is_white(color):
         continue
     paint = precalculated_colors[-idx - 1]
@@ -98,16 +98,16 @@ for x, y, r, color in reversed(solutions):
         idx += 1
         continue
     result_color = Color.mix_colors({Color(int(k)): v for k, v in paint.items()})
-    if np.linalg.norm(result_color.rgb_np() - color.rgb_np()) > 100:
+    if np.linalg.norm(result_color.rgb_np() - color.rgb_np()) > 1e9:
         idx += 1
         print(f'skipping {idx} because color too bad: {result_color} insead of {color}')
         continue
 
     while True:
-        time.sleep(0.01)
+        time.sleep(0.5)
         try:
             result = client.ballista.shoot_aim(500, x, y, paint)
-        except ConnectionAbortedError | http.client.RemoteDisconnected:
+        except ConnectionAbortedError:
             print('connection aborted')
             time.sleep(2)
             continue

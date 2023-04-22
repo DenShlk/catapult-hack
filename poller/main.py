@@ -36,7 +36,7 @@ class ColorPoller:
             print('Picked:', Color(data['response'][_id]['color']).rgb())
 
             time_to_sleep = result['info']['ns'] * 10 ** -9
-            time.sleep(time_to_sleep + 0.04)
+            time.sleep(time_to_sleep + 0.01)
 
 
 if __name__ == '__main__':
@@ -47,6 +47,6 @@ if __name__ == '__main__':
     api = PrefixAPI('/art', DatsArtHttpAPI('http://api.datsart.dats.team/', session))
     client = Client(api)
     # {Color(55, 59, 91): 56500, Color(255, 114, 0): 7500, Color(0, 4, 0): 100},
-    poller = ColorPoller(client.factory, ColorBank({Color(0, 255, 0):51000, Color(0, 128, 0):10000, Color(255, 255, 255): 3000},
+    poller = ColorPoller(client.factory, ColorBank({Color(255,0, 0):51000, Color(200, 200,200):20000,},
                                                    {int(c):v for c, v in client.colors.list()['response'].items()}))
     print(poller.run())
