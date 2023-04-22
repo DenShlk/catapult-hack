@@ -60,16 +60,17 @@ class Ballista(Base):
             'angleHorizontal': angle_horizontal,
             'angleVertical': angle_vertical,
             'power': round(power, 6),
+            'colors': colors,
         }
 
-        for color in colors:
-            data[f'colors[{color}]'] = colors[color]
+        # for color in colors:
+        #     data[f'colors[{color}]'] = colors[color]
 
         return self.api.exec('/shoot', data=data)
 
     def shoot_aim(self, canvas_w: int, x: int, y: int, colors: Dict[int, int]):
         params = point2params(canvas_w, x, y, sum(colors.values()))
-        self.shoot(colors=colors, **params)
+        return self.shoot(colors=colors, **params)
 
 
 class State(Base):

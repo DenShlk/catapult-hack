@@ -1,3 +1,6 @@
+import numpy as np
+
+
 class Color:
     def __init__(self, integer, g=None, b=None):
         if g is None:
@@ -25,7 +28,7 @@ class Color:
         return (self._r << 16) | (self._g << 8) | self._b
 
     @staticmethod
-    def mix_colors(colors: dict['Color', int]) -> 'Color':
+    def mix_colors(colors: dict['Color', float]) -> 'Color':
         r, g, b = 0, 0, 0
         cnt = 0
         for key, value in colors.items():
@@ -33,8 +36,11 @@ class Color:
             g += key.g() * value
             b += key.b() * value
             cnt += value
-        return Color(r // cnt, g // cnt, b // cnt)
+        return Color(int(r / cnt), int(g / cnt), int(b / cnt))
 
     def __repr__(self) -> str:
         return f'({self._r, self._g, self._b})'
+
+    def rgb_np(self):
+        return np.array([self._r, self._g, self._b])
 

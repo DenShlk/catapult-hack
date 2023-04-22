@@ -14,7 +14,15 @@ class DatsArtHttpAPI(API):
         url = urljoin(self._base_url, path)
 
         data = data or {}
-        files = {key: (None, str(data[key])) for key in data}
+        new_data = {}
+        for k, v in data.items():
+            if isinstance(v, dict):
+                for kk in v:
+                    new_data[f'{k}[{kk}]'] = data[k][kk]
+            else:
+                new_data[k] = data[k]
+
+        files = {key: (None, str(new_data[key])) for key in new_data}
         response = self._session.post(url, files=files)
 
         return response.json()
