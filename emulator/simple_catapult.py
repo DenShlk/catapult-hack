@@ -23,8 +23,14 @@ class SimpleCatapult(Catapult):
                 
     def paint(self, x: int, y: int, amount: int, color: Color):
         def amount_in_radius(r):
-            d = r * 2 + 1
-            return (1 + d) * (r + 1) // 2 + (1 + d - 2) * r // 2
+            #d = r * 2 + 1
+            #return (1 + d) * (r + 1) // 2 + (1 + d - 2) * r // 2
+            cnt = 0
+            for x in range(-r, r + 1):
+                for y in range(-r, r + 1):
+                    if x ** 2 + y ** 2 <= r ** 2:
+                        cnt += 1
+            return cnt
 
         radius = 0
         while amount_in_radius(radius) <= amount:
@@ -33,11 +39,16 @@ class SimpleCatapult(Catapult):
         left_over_points = []
         for xx in range(x - radius, x + radius + 1):
             for yy in range(y - radius, y + radius + 1):
-                dist = abs(x - xx) + abs(y - yy)
-                if dist < radius:
+                dist = (x - xx) ** 2 + (y - yy) ** 2
+                if dist <= (radius - 1) ** 2:
                     self.canvas.set(xx, yy, color)
-                elif dist == radius:
+                elif dist <= radius ** 2:
                     left_over_points.append((xx, yy))
+                # dist = abs(x - xx) + abs(y - yy)
+                # if dist < radius:
+                #     self.canvas.set(xx, yy, color)
+                # elif dist == radius:
+                #     left_over_points.append((xx, yy))
 
         left_over_cnt = amount - amount_in_radius(radius - 1)
         for xx, yy in random.sample(left_over_points, left_over_cnt):

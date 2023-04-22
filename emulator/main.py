@@ -30,7 +30,7 @@ class ShootBody:
 async def shoot(data: ShootBody = Depends()):
     colors = {int(k): v for k, v in data.colors.items()}
     emulator.shoot(data.power, data.angleHorizontal, data.angleVertical, colors)
-    return {"status": "success"}
+    return {"status": "success", 'success': True}
 
 
 @dataclass

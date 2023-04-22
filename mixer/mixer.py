@@ -1,3 +1,5 @@
+import random
+
 import numpy as np
 
 from model.color import Color
@@ -13,40 +15,37 @@ from model.color import Color
 
 
 def find_mix(storage: dict[Color, int], target: Color, target_amount: int) -> dict[Color, int]:
-    storage = dict(storage)
+    if len(storage) > 1000:
+        storage = {k: storage[k] for k in random.sample(list(storage.keys()), 1000)}
+    else:
+        storage = dict(storage)
     target = target.rgb_np()
-    current = Color.mix_colors(storage).rgb_np()
     current_amount = sum(storage.values())
-    while current_amount > target_amount * 2:
+    current = sum([w * c.rgb_np() for c, w in storage.items()]) / current_amount
+    while current_amount > target_amount * 2 and len(storage) > 100:
         diff = current - target
-        worst = None
-        worst_proj = -1
-        for c in storage:
-            proj = np.dot(c.rgb_np() - target, diff) / np.linalg.norm(diff)
-            if proj > worst_proj:
-                worst, worst_proj = c, proj
-        worst_amount = storage[worst]
-        current = Color(*list((current * current_amount - worst.rgb_np() * worst_amount)
-                              // (current_amount - worst_amount)))
-        current_amount -= worst_amount
-        storage[worst] -= worst_amount
-        if storage[worst] == 0:
-            storage.pop(worst)
+
+        bads = sorted(list(storage.keys()), key=lambda c: np.dot(c.rgb_np() - target, diff) / np.linalg.norm(diff))[-50:]
+        for bad in bads:
+            bad_amount = storage[bad]
+            current = (current * current_amount - bad.rgb_np() * bad_amount) / (current_amount - bad_amount)
+            current_amount -= bad_amount
+            storage[bad] -= bad_amount
+            if storage[bad] == 0:
+                storage.pop(bad)
+        # print(f'rough stage: still has {current_amount}/{target_amount}, current avg {current}')
 
     while current_amount > target_amount:
         diff = current - target
-        worst = None
-        worst_proj = -1
-        for c in storage:
-            proj = np.dot(c.rgb_np() - target, diff) / np.linalg.norm(diff)
-            if proj > worst_proj:
-                worst, worst_proj = c, proj
-        worst_amount = 1
-        current = Color(*list((current * current_amount - worst.rgb_np() * worst_amount)
-                              // (current_amount - worst_amount)))
-        current_amount -= worst_amount
-        storage[worst] -= worst_amount
-        if storage[worst] == 0:
-            storage.pop(worst)
+
+        bads = sorted(list(storage.keys()), key=lambda c: np.dot(c.rgb_np() - target, diff) / np.linalg.norm(diff))[-1:]#[-(current_amount - target_amount) // 50 - 1:]
+        for bad in bads:
+            bad_amount = min(storage[bad], (current_amount - target_amount) // 10 + 1)
+            current = (current * current_amount - bad.rgb_np() * bad_amount) / (current_amount - bad_amount)
+            current_amount -= bad_amount
+            storage[bad] -= bad_amount
+            if storage[bad] == 0:
+                storage.pop(bad)
+        # print(f'fine stage: still has {current_amount}/{target_amount}, current avg {current}')
 
     return storage

@@ -8,11 +8,13 @@ from client.dats_api import DatsArtHttpAPI
 import time
 
 from model.color import Color
+from poller.color_bank import ColorBank
 
 
 class ColorPoller:
-    def __init__(self, factory: Factory):
+    def __init__(self, factory: Factory, color_bank: ColorBank):
         self.factory = factory
+        self.color_bank = color_bank
 
     def run(self):
         while True:
@@ -23,7 +25,8 @@ class ColorPoller:
                 time.sleep(2)
                 continue
 
-            _id = random.choice(list(data['response'].keys()))
+            options = data['response']
+            _id = self.color_bank.choose(options)
             result = self.factory.pick(_id, data['info']['tick'])
 
             if not result['success']:
@@ -44,5 +47,6 @@ if __name__ == '__main__':
     api = PrefixAPI('/art', DatsArtHttpAPI('http://api.datsart.dats.team/', session))
     client = Client(api)
 
-    poller = ColorPoller(client.factory)
+    poller = ColorPoller(client.factory, ColorBank({Color(55, 59, 91): 56500, Color(255, 114, 0): 7500, Color(0, 4, 0): 100},
+                                                   {int(c):v for c, v in client.colors.list()['response'].items()}))
     print(poller.run())
