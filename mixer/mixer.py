@@ -13,10 +13,9 @@ from model.color import Color
 #     def mix_with(self, another: 'Mix') -> 'Mix':
 #         return Mix(self.colors + another.colors, self.amounts + another.amounts)
 
-
 def find_mix(storage: dict[Color, int], target: Color, target_amount: int) -> dict[Color, int]:
-    if len(storage) > 1000:
-        storage = {k: storage[k] for k in random.sample(list(storage.keys()), 1000)}
+    if len(storage) > 500:
+        storage = {k: storage[k] for k in random.sample(list(storage.keys()), 500)}
     else:
         storage = dict(storage)
     target = target.rgb_np()

@@ -1,4 +1,3 @@
-import http.client
 import json
 import time
 
@@ -23,22 +22,22 @@ client = Client(api)
 colors = client.colors.list()['response']
 colors = {Color(int(k)): v for k, v in colors.items()}
 
-# comment 2 lines down to go production
-api = PrefixAPI('/art', DatsArtHttpJsonAPI('http://127.0.0.1:8000/', session))
-client = Client(api)
+
+# api = PrefixAPI('/art', DatsArtHttpJsonAPI('http://127.0.0.1:8000/', session))
+# client = Client(api)
 
 # client.ballista.shoot_aim(250, 110, 120, {int(k): v for k, v in colors.items()})
 
 # target = Color(192, 39, 46)
 # colors = find_mix(colors, target, 1500)
 # print(f'target: {target}, result: {Color.mix_colors(colors)} {sum(colors.values())}')
-# exit(0)
 
-with open('solutions/level_4.json') as f:
+
+with open('solutions/level_3.json') as f:
     solutions = json.load(f)
 
-solutions = sorted(solutions, key=lambda arr: arr[1], reverse=False)
-# solutions = sorted(solutions, key=lambda arr: arr[2], reverse=True)
+#solutions = sorted(solutions, key=lambda arr: arr[1], reverse=False)
+solutions = sorted(solutions, key=lambda arr: arr[2], reverse=True)
 
 
 # exit(0)
@@ -63,7 +62,7 @@ start_time = time.time()
 idx = 0
 precalculated_colors = []
 for x, y, r, color in tqdm(solutions):
-    color = Color(color[1], color[0], color[2])
+    color = Color(*color)
     if is_white(color):
         continue
 
@@ -81,16 +80,16 @@ for x, y, r, color in tqdm(solutions):
 
 print(f'calculated mixing, took {time.time() - start_time}s')
 
-with open('solutions/level_4_colors.json', 'w') as f:
+with open('solutions/level_3_colors.json', 'w') as f:
     json.dump(precalculated_colors, f)
 
-with open('solutions/level_4_colors.json') as f:
+with open('solutions/level_3_colors.json') as f:
     precalculated_colors = json.load(f)
 start_time = time.time()
 print(f'total amount of paint: {sum([sum(x.values()) for x in precalculated_colors])}')
 idx = 0
 for x, y, r, color in reversed(solutions):
-    color = Color(color[1], color[0], color[2])
+    color = Color(*color)
     if is_white(color):
         continue
     paint = precalculated_colors[-idx - 1]
@@ -104,10 +103,10 @@ for x, y, r, color in reversed(solutions):
         continue
 
     while True:
-        time.sleep(0.01)
+        time.sleep(0.5)
         try:
             result = client.ballista.shoot_aim(500, x, y, paint)
-        except ConnectionAbortedError | http.client.RemoteDisconnected:
+        except ConnectionAbortedError:
             print('connection aborted')
             time.sleep(2)
             continue

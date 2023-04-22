@@ -46,7 +46,7 @@ if __name__ == '__main__':
 
     api = PrefixAPI('/art', DatsArtHttpAPI('http://api.datsart.dats.team/', session))
     client = Client(api)
-
-    poller = ColorPoller(client.factory, ColorBank({Color(55, 59, 91): 56500, Color(255, 114, 0): 7500, Color(0, 4, 0): 100},
+    # {Color(55, 59, 91): 56500, Color(255, 114, 0): 7500, Color(0, 4, 0): 100},
+    poller = ColorPoller(client.factory, ColorBank({Color(0, 255, 0):51000, Color(0, 128, 0):10000, Color(255, 255, 255): 3000},
                                                    {int(c):v for c, v in client.colors.list()['response'].items()}))
     print(poller.run())

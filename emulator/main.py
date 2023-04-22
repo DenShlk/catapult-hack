@@ -10,7 +10,7 @@ from simple_catapult import SimpleCatapult
 from model.canvas import Canvas
 
 app = FastAPI()
-emulator = Emulator(SimpleCatapult, Canvas(250, 250))
+emulator = Emulator(SimpleCatapult, Canvas(500, 500))
 
 
 @app.get("/")
